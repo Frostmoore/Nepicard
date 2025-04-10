@@ -14,5 +14,15 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+        $exceptions->renderable(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, $request) {
+            \Illuminate\Support\Facades\Log::warning('Limite di richieste superato', [
+                'ip' => $request->ip(),
+                'url' => $request->fullUrl(),
+                'user_id' => optional($request->user())->id,
+                'timestamp' => now(),
+            ]);
+    
+            return response()->view('errors.429', [], 429);
+        });
+    })    
+    ->create();

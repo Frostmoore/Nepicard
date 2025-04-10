@@ -19,6 +19,9 @@
 
         <!-- Lucide Icons -->
         <script src="https://unpkg.com/lucide@latest" defer></script>
+        
+        <!-- Font Awesome CDN -->
+        <script src="https://kit.fontawesome.com/11dce758f8.js" crossorigin="anonymous"></script>
     </head>
 
     <body class="font-sans antialiased bg-gray-900 text-white">

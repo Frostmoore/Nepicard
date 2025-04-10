@@ -4,13 +4,25 @@
 
         <div>
             <x-input-label for="name" value="Nome" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="given-name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <div class="mt-4">
+            <x-input-label for="surname" value="Cognome" />
+            <x-text-input id="surname" class="block mt-1 w-full" type="text" name="surname" :value="old('surname')" required autocomplete="family-name" />
+            <x-input-error :messages="$errors->get('surname')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="username" value="Username" />
+            <x-text-input id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('username')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
             <x-input-label for="email" value="Email" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
