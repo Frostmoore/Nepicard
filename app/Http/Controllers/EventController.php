@@ -34,8 +34,6 @@ class EventController extends Controller
         if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
             $coverPath = $request->file('cover')->store('covers', 'public');
             $validated['cover'] = 'storage/' . $coverPath;
-        } else {
-            return back()->withErrors(['cover' => 'Errore durante il caricamento dell\'immagine.']);
         }
         
 
@@ -65,18 +63,23 @@ class EventController extends Controller
             'available_points' => 'nullable|integer|min:0',
         ]);
 
+        // Se è stata caricata una nuova immagine
         if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+            // Elimina vecchia immagine se esiste
+            if ($event->cover && \Storage::disk('public')->exists(str_replace('storage/', '', $event->cover))) {
+                \Storage::disk('public')->delete(str_replace('storage/', '', $event->cover));
+            }
+        
             $coverPath = $request->file('cover')->store('covers', 'public');
             $validated['cover'] = 'storage/' . $coverPath;
-        } else {
-            return back()->withErrors(['cover' => 'Errore durante il caricamento dell\'immagine.']);
         }
         
 
         $event->update($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Evento aggiornato.');
+        return redirect()->route('admin.events.index')->with('success', 'Evento aggiornato con successo.');
     }
+
 
 
     public function destroy(Event $event) {
