@@ -13,7 +13,7 @@
     @endif
 
     <select name="{{ $name }}" id="{{ $name }}"
-            {{ $attributes->merge(['class' => 'mt-1 w-full rounded-md bg-gray-700 text-white border-gray-600 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500']) }}>
+            {{ $attributes->merge(['class' => 'mt-1 mb-4 w-full rounded-md bg-gray-700 text-white border-gray-600 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500']) }}>
         <option value="">-- Seleziona --</option>
 
         @foreach ($options as $item)

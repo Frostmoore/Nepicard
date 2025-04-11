@@ -12,7 +12,6 @@ use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
 {
-
     public function index(Request $request): View
     {
         $query = User::query();
@@ -43,7 +42,7 @@ class AdminUserController extends Controller
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -51,43 +50,14 @@ class AdminUserController extends Controller
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'website' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
             'role' => ['required', 'string'],
+            'company' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user->fill($validated);
-
-        if ($request->role === 'business') {
-            $user->fill($request->only([
-                'coordinates',
-                'ditta',
-                'sede',
-                'piva',
-                'cf',
-                'pec',
-                'codice_univoco',
-            ]));
-        } else {
-            // Pulisci i campi aziendali se il ruolo non è business
-            $user->fill([
-                'coordinates' => null,
-                'ditta' => null,
-                'sede' => null,
-                'piva' => null,
-                'cf' => null,
-                'pec' => null,
-                'codice_univoco' => null,
-            ]);
-        }
-
-        $user->save();
+        $user->update($validated);
 
         return redirect()->route('admin.users.index')->with('success', 'Utente aggiornato con successo.');
     }
-
 
     public function destroy(User $user): RedirectResponse
     {

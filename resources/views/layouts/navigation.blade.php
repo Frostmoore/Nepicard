@@ -24,6 +24,22 @@
                     class="{{ request()->routeIs('admin.users.*') ? 'text-white border-b-2 border-white pb-1' : 'text-gray-300 hover:text-white' }} text-sm font-medium transition">
                     <i class="fa-solid fa-users me-1"></i> Utenti
                 </a>
+                <a href="{{ route('admin.categories.index') }}"
+                    class="{{ request()->routeIs('admin.categories.*') ? 'text-white border-b-2 border-white pb-1' : 'text-gray-300 hover:text-white' }} text-sm font-medium transition">
+                    <i class="fa-solid fa-layer-group"></i> Categorie
+                </a>
+                <a href="{{ route('admin.companies.index') }}"
+                    class="{{ request()->routeIs('admin.companies.*') ? 'text-white border-b-2 border-white pb-1' : 'text-gray-300 hover:text-white' }} text-sm font-medium transition">
+                    <i class="fa-solid fa-building"></i> Aziende
+                </a>
+                <a href="{{ route('admin.packages.index') }}"
+                    class="{{ request()->routeIs('admin.packages.*') ? 'text-white border-b-2 border-white pb-1' : 'text-gray-300 hover:text-white' }} text-sm font-medium transition">
+                    <i class="fa-solid fa-boxes-stacked"></i> Pacchetti
+                </a>
+                <a href="{{ route('admin.events.index') }}"
+                    class="{{ request()->routeIs('admin.events.*') ? 'text-white border-b-2 border-white pb-1' : 'text-gray-300 hover:text-white' }} text-sm font-medium transition">
+                    <i class="fa-solid fa-calendar-days"></i> Eventi
+                </a>
             </div>
 
             <!-- DESTRA: Utente -->
