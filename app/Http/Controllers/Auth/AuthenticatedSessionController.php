@@ -28,7 +28,27 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        // Se utente business non approvato, logout e redirect
+        if ($user->role === 'business' && $user->status == 0) {
+            Auth::logout();
+            return redirect()->route('business.pending');
+        }
+
+        // Redirect in base al ruolo
+        switch ($user->role) {
+            case 'admin':
+            case 'superadmin':
+                return redirect()->intended(route('dashboard', absolute: false));
+
+            case 'business':
+                return redirect()->intended(route('business.dashboard', absolute: false));
+
+            case 'user':
+            default:
+                return redirect()->intended(route('user.dashboard', absolute: false));
+        }
     }
 
     /**

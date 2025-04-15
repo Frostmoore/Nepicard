@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="mt-6 flex justify-center">
-        <form method="POST" action="{{ route('admin.companies.store') }}"
+        <form method="POST" action="{{ route('admin.companies.store') }}" enctype="multipart/form-data"
               class="bg-gray-800 rounded-xl shadow-lg w-full max-w-4xl p-6 space-y-6 text-white">
             @csrf
 
@@ -13,10 +13,16 @@
                 <x-form-field id="email" label="Email" :value="old('email')" />
                 <x-form-field id="phone" label="Telefono" :value="old('phone')" />
                 <x-form-field id="address" label="Indirizzo" :value="old('address')" />
-                <x-form-field id="coordinates" label="Coordinate" :value="old('coordinates')" />
+                
+                <div class="md:col-span-2">
+                    <x-input-label for="coordinates" value="Posizione sulla mappa" />
+                    <div id="map" class="w-full h-64 rounded-lg shadow border border-gray-600"></div>
+                    <input type="hidden" name="coordinates" id="coordinates" value="{{ old('coordinates') }}">
+                    <x-input-error :messages="$errors->get('coordinates')" class="mt-2" />
+                </div>
+
                 <x-form-field id="website" label="Sito Web" :value="old('website')" />
 
-                {{-- SELECT: Categoria --}}
                 <x-select
                     name="category"
                     label="Categoria"
@@ -41,6 +47,21 @@
                     </select>
                     <x-input-error :messages="$errors->get('status')" class="mt-2" />
                 </div>
+
+                {{-- Campo Immagini --}}
+                <div class="col-span-full">
+                    <x-input-label for="pictures" value="Immagini (max 5)" />
+                    <input type="file" id="pictures" name="pictures[]" multiple accept="image/*"
+                        class="hidden" onchange="handleFiles(this.files)">
+                    <div class="flex flex-wrap gap-2 mt-2" id="preview"></div>
+                    <x-primary-button type="button" class="mt-4" onclick="document.getElementById('pictures').click()">
+                        <i class="fa-solid fa-upload me-2"></i> Aggiungi Immagini
+                    </x-primary-button>
+                    <x-input-error :messages="$errors->get('pictures')" class="mt-2" />
+                </div>
+
+
+
             </div>
 
             <div class="flex justify-end gap-4">
@@ -51,4 +72,90 @@
             </div>
         </form>
     </div>
+
+    @push('scripts')
+        <script>
+            let selectedFiles = [];
+
+            function handleFiles(files) {
+                const preview = document.getElementById('preview');
+
+                [...files].forEach(file => {
+                    if (selectedFiles.length >= 5) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const div = document.createElement('div');
+                        div.className = 'relative w-24 h-24';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="object-cover w-full h-full rounded shadow" />
+                            <span class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 cursor-pointer rounded"
+                                onclick="removeImage(this)">x</span>
+                        `;
+                        preview.appendChild(div);
+                    };
+                    selectedFiles.push(file);
+                    reader.readAsDataURL(file);
+                });
+
+                updateInputFiles();
+            }
+
+            function removeImage(el) {
+                const index = [...el.parentElement.parentElement.children].indexOf(el.parentElement);
+                selectedFiles.splice(index, 1);
+                el.parentElement.remove();
+                updateInputFiles();
+            }
+
+            function updateInputFiles() {
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => dataTransfer.items.add(file));
+                document.getElementById('pictures').files = dataTransfer.files;
+            }
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const defaultLatLng = [42.2421, 12.3392]; // Nepi
+                const map = L.map('map').setView(defaultLatLng, 15);
+                let marker;
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                function setMarker(latlng) {
+                    if (marker) marker.setLatLng(latlng);
+                    else marker = L.marker(latlng, { draggable: true }).addTo(map);
+
+                    document.getElementById('coordinates').value = `${latlng.lat},${latlng.lng}`;
+
+                    marker.on('dragend', function(e) {
+                        const pos = e.target.getLatLng();
+                        document.getElementById('coordinates').value = `${pos.lat},${pos.lng}`;
+                    });
+                }
+
+                map.on('click', function(e) {
+                    setMarker(e.latlng);
+                });
+
+                // Se esistono coordinate precedenti, mostra il marker
+                const oldCoords = document.getElementById('coordinates').value;
+                if (oldCoords) {
+                    const parts = oldCoords.split(',');
+                    if (parts.length === 2) {
+                        setMarker({ lat: parseFloat(parts[0]), lng: parseFloat(parts[1]) });
+                        map.setView([parseFloat(parts[0]), parseFloat(parts[1])], 15);
+                    }
+                }
+            });
+        </script>
+
+    @endpush
+
+
+
+
 </x-app-layout>

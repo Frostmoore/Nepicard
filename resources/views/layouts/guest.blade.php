@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'NepiCard') }}</title>
+        <title>{{ config('app.name', 'SuperSconti') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -30,7 +30,7 @@
             <div class="mb-6">
                 <a href="/" class="flex items-center space-x-2">
                     <x-application-logo class="w-16 h-16 fill-current text-white" />
-                    <span class="text-xl font-bold">NepiCard</span>
+                    <span class="text-xl font-bold">SuperSconti</span>
                 </a>
             </div>
 

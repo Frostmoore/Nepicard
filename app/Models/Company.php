@@ -14,6 +14,7 @@ class Company extends Model
         'category',
         'email',
         'phone',
+        'pictures',
         'status',
         'points',
         'piva',

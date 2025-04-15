@@ -45,21 +45,36 @@ class CompanyController extends Controller
             'codice_univoco' => 'nullable|string|max:20',
         ]);
 
-        Company::create($request->only([
-            'name',
-            'address',
-            'coordinates',
-            'website',
-            'category',
-            'email',
-            'phone',
-            'status',
-            'points',
-            'piva',
-            'cf',
-            'pec',
-            'codice_univoco',
-        ]));
+        $pictures = [];
+        if ($request->hasFile('pictures')) {
+            foreach ($request->file('pictures') as $img) {
+                if ($img->isValid()) {
+                    $path = $img->store('companies', 'public');
+                    $pictures[] = 'storage/' . $path;
+                }
+            }
+        }
+
+        Company::create(array_merge(
+            $request->only([
+                'name',
+                'address',
+                'coordinates',
+                'website',
+                'category',
+                'email',
+                'phone',
+                'status',
+                'points',
+                'piva',
+                'cf',
+                'pec',
+                'codice_univoco',
+            ]),
+            ['pictures' => $pictures]
+        ));
+
+
         
         return redirect()->route('admin.companies.index')->with('success', 'Azienda creata.');
     }
@@ -94,7 +109,7 @@ class CompanyController extends Controller
             'codice_univoco' => 'nullable|string|max:20',
         ]);
         
-        Company::update($request->only([
+        $company->update($request->only([
             'name',
             'address',
             'coordinates',
@@ -109,6 +124,24 @@ class CompanyController extends Controller
             'pec',
             'codice_univoco',
         ]));
+        
+
+        $pictures = $request->input('existing_pictures', []);
+        if ($request->hasFile('pictures')) {
+            foreach ($request->file('pictures') as $img) {
+                if ($img->isValid()) {
+                    $path = $img->store('companies', 'public');
+                    $pictures[] = 'storage/' . $path;
+                }
+            }
+        }
+
+        $company->update(array_merge(
+            $request->except(['pictures', 'existing_pictures']),
+            ['pictures' => $pictures]
+        ));
+
+
 
         return redirect()->route('admin.companies.index')->with('success', 'Azienda aggiornata.');
     }

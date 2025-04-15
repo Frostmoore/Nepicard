@@ -42,17 +42,30 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $field = filter_var($this->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $credentials = [$field => $this->input('email')];
 
-        if (! Auth::attempt([$field => $this->input('email'), 'password' => $this->input('password')], $this->boolean('remember'))) {
+        $user = \App\Models\User::where($field, $this->input('email'))->first();
+
+        if (! $user || ! \Illuminate\Support\Facades\Hash::check($this->input('password'), $user->password)) {
             RateLimiter::hit($this->throttleKey());
-
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
 
+        // Blocca se status non è 1
+        if ($user->status != 1) {
+            throw ValidationException::withMessages([
+                'email' => 'Il tuo account è in attesa di approvazione da parte di un amministratore.',
+            ]);
+        }
+
+        Auth::login($user, $this->boolean('remember'));
         RateLimiter::clear($this->throttleKey());
     }
+
+
+
 
 
     /**

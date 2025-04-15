@@ -7,6 +7,13 @@
 
         <title>{{ config('app.name', 'NepiCard') }}</title>
 
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -14,13 +21,22 @@
         <!-- Font Awesome CDN -->
         <script src="https://kit.fontawesome.com/11dce758f8.js" crossorigin="anonymous"></script>
 
+        <!-- Select2 -->
+        {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
+
+
         <!-- Styles & Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-gray-900 text-white">
         <div class="min-h-screen flex flex-col">
             <header class="bg-gray-800 shadow-md">
-                @include('layouts.navigation')
+                @auth
+                    <header class="bg-gray-800 shadow-md">
+                        @include('layouts.navigation')
+                    </header>
+                @endauth
             </header>
 
             <main class="flex-1 container mx-auto p-4">
@@ -32,6 +48,8 @@
                 &copy; {{ date('Y') }} NepiCard. Tutti i diritti riservati.
             </footer>
         </div>
+
+        @stack('scripts')
 
         <!-- Flowbite + Font Awesome -->
         <script src="https://unpkg.com/flowbite@latest/dist/flowbite.min.js"></script>
